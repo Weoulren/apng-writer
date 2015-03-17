@@ -19,7 +19,6 @@ import ork.sevenstates.apng.optimizing.Optimizer;
 
 public class APNGWriter extends AbstractAPNGWriter {
 	private final WritableByteChannel out;
-	private boolean closed = false;
 	private int frameCount = 0;
 
 	private boolean initialized;
