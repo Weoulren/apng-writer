@@ -29,22 +29,15 @@ public class Tools {
 	}
 
 	public static Map.Entry<Rectangle, BufferedImage> formatResult(BufferedImage source, Dimension d) {
-		return new AbstractMap.SimpleImmutableEntry<Rectangle, BufferedImage>(new Rectangle(d), source);
+		return new AbstractMap.SimpleImmutableEntry<>(new Rectangle(d), source);
 	}
 
 	public static Map.Entry<Rectangle, BufferedImage> formatResult(BufferedImage source, Rectangle r) {
-		return new AbstractMap.SimpleImmutableEntry<Rectangle, BufferedImage>(r, source);
+		return new AbstractMap.SimpleImmutableEntry<>(r, source);
 	}
 
 	public static ByteBuffer compress(ByteBuffer in, int level) {
 		int remaining = in.remaining();
-//		Deflater deflater = new Deflater(in.remaining() > 42 ? level : 0);
-//		deflater.setInput(in.array());
-//		deflater.finish();
-//		ByteBuffer bb = ByteBuffer.allocate(remaining + 20 + 4);
-//		int nBytes = deflater.deflate(bb.array(), 0, remaining + 20);
-//		bb.limit(nBytes);
-//		return bb;
 		Deflater deflater = new Deflater(remaining > 42 ? level : 0);
 
 		int size = remaining + 20;

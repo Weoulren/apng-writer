@@ -56,7 +56,7 @@ abstract class LocalMinimum extends Filter {
 	protected void encodeRow(final ByteBuffer in, final int srcOffset, ByteBuffer out, final int len,
 			int destOffset) {
 		Integer minsize = null;
-		List<Callable<Entry<Integer, ByteBuffer>>> tasks = new ArrayList<Callable<Entry<Integer, ByteBuffer>>>();
+		List<Callable<Entry<Integer, ByteBuffer>>> tasks = new ArrayList<>();
 		
 		for (int i = 0; i < simpleFilters.length; i++) {
 			final Filter filter = simpleFilters[i];

@@ -21,7 +21,7 @@ public class DeflaterLocalMinimum extends LocalMinimum {
 			writen += d.deflate(tmpbuf);
 		d.end();
 		dfl.position(0);
-		return new AbstractMap.SimpleImmutableEntry<Integer, ByteBuffer>(writen, dfl);
+		return new AbstractMap.SimpleImmutableEntry<>(writen, dfl);
 	}
 
 }

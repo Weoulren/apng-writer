@@ -17,7 +17,7 @@ public class DiffLocalMinimum extends LocalMinimum {
 		}
 		
 		dfl.position(0);
-		return new AbstractMap.SimpleImmutableEntry<Integer, ByteBuffer>(e, dfl);
+		return new AbstractMap.SimpleImmutableEntry<>(e, dfl);
 	}
 
 }
