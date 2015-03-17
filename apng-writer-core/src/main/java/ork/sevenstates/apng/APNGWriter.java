@@ -81,12 +81,12 @@ public class APNGWriter extends AbstractAPNGWriter {
 		
 		out.write(ByteBuffer.wrap(Consts.getPNGSIGArr()));
 		out.write(makeIHDRChunk(size, numPlanes, bitsPerPlane));
-		out.write(make_acTLChank(frameCount, loopCount));
+		out.write(make_acTLChunk(frameCount, loopCount));
 		frameCountEnd = frameCount;
 		initialized = true;
 	}
 
-	public void writeImage(Image img, Dimension size) throws IOException {
+	public void writeImage(Image img, Dimension size, int fpsNum, int fpsDen) throws IOException {
 		ensureOpen();
 		ensureInitialized();
 		if (img == null) {
@@ -104,7 +104,7 @@ public class APNGWriter extends AbstractAPNGWriter {
 		Rectangle key = bi.getKey();
 		ByteBuffer buffer = getPixelBytes(value, key.getSize());
 		
-		out.write(makeFCTL(key, frameCount != 0));
+		out.write(makeFCTL(key, fpsNum, fpsDen, frameCount != 0));
 		out.write(makeDAT(frameCount == 0 ? Consts.IDAT_SIG : Consts.fdAT_SIG, buffer));
 		frameCount++;
 	}

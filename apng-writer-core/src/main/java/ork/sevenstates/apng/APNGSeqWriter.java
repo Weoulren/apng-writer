@@ -35,7 +35,7 @@ public class APNGSeqWriter extends AbstractAPNGWriter {
 		this(new File(fName), alg, optimizer);
 	}
 
-	public void writeImage(Image img, Dimension size) throws IOException {
+	public void writeImage(Image img, Dimension size, int fpsNum, int fpsDen) throws IOException {
 		ensureOpen();
 		if (img == null) {
 			throw new IOException("Image is null");
@@ -66,7 +66,7 @@ public class APNGSeqWriter extends AbstractAPNGWriter {
 		}
 
 		
-		out.write(makeFCTL(key, frameCount != 0));
+		out.write(makeFCTL(key, fpsNum, fpsDen, frameCount != 0));
 		out.write(makeDAT(frameCount == 0 ? Consts.IDAT_SIG : Consts.fdAT_SIG, buffer));
 		frameCount++;
 	}
@@ -81,7 +81,7 @@ public class APNGSeqWriter extends AbstractAPNGWriter {
 		
 		//frame count
 		out.position(actlBlockOffset);
-		out.write(make_acTLChank(frameCount, 0));
+		out.write(make_acTLChunk(frameCount, 0));
 		
 		super.close();
 		out.truncate(point);

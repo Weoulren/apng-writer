@@ -51,11 +51,46 @@ public abstract class AbstractAPNGWriter implements Closeable {
 			throw new IOException("Image is null");
 		}
 
-		writeImage(img, Tools.dimsFromImage(img));
+		writeImage(img, Tools.dimsFromImage(img), fpsNum, fpsDen);
 	}
-	
-	public abstract void writeImage(Image img, Dimension size) throws IOException;
-	
+
+	public void writeImage(BufferedImage img, int fpsNum, int fpsDen) throws IOException {
+		ensureOpen();
+		if (img == null) {
+			throw new IOException("Image is null");
+		}
+
+		writeImage(img, Tools.dimsFromImage(img), fpsNum, fpsDen);
+	}
+
+	public void writeImage(BufferedImage img, int delay) throws IOException {
+		ensureOpen();
+		if (img == null) {
+			throw new IOException("Image is null");
+		}
+
+		writeImage(img, Tools.dimsFromImage(img), delay);
+	}
+
+	public void writeImage(Image img, Dimension size) throws IOException {
+		ensureOpen();
+		if (img == null) {
+			throw new IOException("Image is null");
+		}
+		writeImage(img, size, fpsNum, fpsDen);
+	}
+
+	public void writeImage(Image img, Dimension size, int delay) throws IOException {
+		ensureOpen();
+		if (img == null) {
+			throw new IOException("Image is null");
+		}
+		int gcd = gcd(1000, delay);
+		writeImage(img, size, 1000/gcd, delay/gcd);
+	}
+
+	public abstract void writeImage(Image img, Dimension size, int fpsNum, int fpsDen) throws IOException;
+
 	protected ByteBuffer makeIHDRChunk(Dimension d, byte numPlanes, byte bitsPerPlane) throws IOException { //http://www.w3.org/TR/PNG/#11IHDR
 		ByteBuffer bb = ByteBuffer.allocate(Consts.IHDR_TOTAL_LEN);
 		bb.putInt(Consts.IHDR_DATA_LEN);
@@ -95,7 +130,7 @@ public abstract class AbstractAPNGWriter implements Closeable {
 		filter.close();
 	}
 	
-	protected ByteBuffer make_acTLChank(int frameCount, int loopCount) {
+	protected ByteBuffer make_acTLChunk(int frameCount, int loopCount) {
 		ByteBuffer bb = ByteBuffer.wrap(Consts.getacTLArr());
 		bb.position(8);
 		bb.putInt(frameCount);
@@ -114,7 +149,7 @@ public abstract class AbstractAPNGWriter implements Closeable {
 		return (int) crc.getValue();
 	}
 
-	protected ByteBuffer makeFCTL(Rectangle r, boolean succ) throws IOException {
+	protected ByteBuffer makeFCTL(Rectangle r, int fpsNum, int fpsDen, boolean succ) throws IOException {
 		ByteBuffer bb = ByteBuffer.allocate(Consts.fcTL_TOTAL_LEN);
 
 		bb.putInt(Consts.fcTL_DATA_LEN);
@@ -241,5 +276,7 @@ public abstract class AbstractAPNGWriter implements Closeable {
 	public void setFpsDen(int fpsDen) {
 		this.fpsDen = fpsDen;
 	}
+
+	private static int gcd(int a, int b) { return b==0 ? a : gcd(b, a%b); }
 	
 }
