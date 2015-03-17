@@ -12,11 +12,14 @@ import java.awt.image.WritableRaster;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ork.sevenstates.apng.Tools;
 
 public class ARGBSubtractor implements Optimizer {
 	public static final double DEFAULT_THRESHOLD = 0.6d;
+    private static final Logger LOGGER = Logger.getLogger(ARGBSubtractor.class.getName());
     private BufferedImage previous;
     private Double threshold;
 
@@ -60,9 +63,10 @@ public class ARGBSubtractor implements Optimizer {
         }
 
         int[] filtered = getFilteredData(prevWork, from, dim, data);
-
-        System.err.println("all: " + data.all + ", mod: " + data.modified + ", which is " + 
-        NumberFormat.getInstance(Locale.US).format(data.fractionModified()*100d) + "%");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("all: " + data.all + ", mod: " + data.modified + ", which is " +
+                    NumberFormat.getInstance(Locale.US).format(data.fractionModified() * 100d) + "%");
+        }
 
         BufferedImage filteredImage = data2image(filtered, dim);
 
@@ -99,7 +103,7 @@ public class ARGBSubtractor implements Optimizer {
             reverted = stripDeshrapneller(dataThis, dataPrev, dOrig, reverted);
         
 //        reverted = matrix5filter(dataThis, dataPrev, dOrig, reverted);
-        System.err.println(reverted);
+        LOGGER.fine("Deshrapnelling filter reverted " + reverted + " pixels");
         data.modified-=reverted;
         return dataThis;
     }

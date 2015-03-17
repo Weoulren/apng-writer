@@ -3,10 +3,12 @@ package ork.sevenstates.apng.optimizing;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import ork.sevenstates.apng.Tools;
 
 public class Slicer extends Identity {
+    private static final Logger LOGGER = Logger.getLogger(Slicer.class.getName());
     private BufferedImage previous;
 
     @Override
@@ -34,8 +36,8 @@ public class Slicer extends Identity {
         }
 
         Dimension d = data.getSize();
-        System.err.println("Dimm size: " + dOrig.width + "x" + dOrig.height);
-        System.err.println("Actual size: " + d.width + "x" + d.height + " starting at " + data.topLeft.x + "," + data.topLeft.y);
+        LOGGER.fine("Dimm size: " + dOrig.width + "x" + dOrig.height);
+        LOGGER.fine("Actual size: " + d.width + "x" + d.height + " starting at " + data.topLeft.x + "," + data.topLeft.y);
 
         if (!d.equals(dOrig)) {
             BufferedImage bi = from.getSubimage(data.topLeft.x, data.topLeft.y, d.width, d.height);
@@ -55,7 +57,7 @@ public class Slicer extends Identity {
         for (;indexfw < dataThis.length && dataThis[indexfw] == dataPrev[indexfw]; indexfw++);
 
         if (dataThis.length == indexfw) { //no data
-            System.err.println("no data");
+            LOGGER.fine("no data");
             return false;
         }
 
@@ -95,7 +97,7 @@ public class Slicer extends Identity {
         }
         data.topLeft=new Point(xs, ys);
         data.bottomRight = new Point(xe, ye);
-        System.err.println("Math for this one: xs,ys=" + xs + ","+ys + "; wxh=" + (xe - xs + 1) + "x" + (ye - ys + 1));
+        LOGGER.fine("Math for this one: xs,ys=" + xs + ","+ys + "; wxh=" + (xe - xs + 1) + "x" + (ye - ys + 1));
         return false;
     }
 }

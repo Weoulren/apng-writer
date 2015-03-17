@@ -3,11 +3,12 @@ package ork.sevenstates.apng.optimizing;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import ork.sevenstates.apng.Tools;
 
 public class ARGBSlicingSubtractor extends ARGBSubtractor {
-
+    private static final Logger LOGGER = Logger.getLogger(Slicer.class.getName());
     public ARGBSlicingSubtractor(Double threshold) {
         super(threshold);
     }
@@ -26,8 +27,8 @@ public class ARGBSlicingSubtractor extends ARGBSubtractor {
         }
 
         Dimension d = data.getSize();
-        System.err.println("Dimm size: " + rect.width + "x" + rect.height);
-        System.err.println("Actual size: " + d.width + "x" + d.height + " starting at " + data.topLeft.x + "," + data.topLeft.y);
+        LOGGER.fine("Dimm size: " + rect.width + "x" + rect.height);
+        LOGGER.fine("Actual size: " + d.width + "x" + d.height + " starting at " + data.topLeft.x + "," + data.topLeft.y);
 
         if (!d.equals(rect.getSize())) {
             BufferedImage bi = result.getValue().getSubimage(data.topLeft.x, data.topLeft.y, d.width, d.height);
