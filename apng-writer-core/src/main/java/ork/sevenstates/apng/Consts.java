@@ -9,7 +9,7 @@ public class Consts {
 	public static final int IDAT_SIG = 0x49444154;
 	public static final int fdAT_SIG = 0x66644154;
 	public static final int fcTL_SIG = 0x6663544c;
-	public static final int IEND_TYPE = 0x49454e44;
+	public static final int IEND_SIG = 0x49454e44;
 	
 	public static final int CHUNK_DELTA = 
 			  4 //chunk len
