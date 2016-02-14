@@ -13,6 +13,14 @@ public class ARGBSlicingSubtractor extends ARGBSubtractor {
         super(threshold);
     }
 
+    public ARGBSlicingSubtractor(DeshrapnelingStrategy strategy) {
+        super(strategy);
+    }
+
+    public ARGBSlicingSubtractor(Double threshold, DeshrapnelingStrategy strategy) {
+        super(threshold, strategy);
+    }
+
     @Override
     public Map.Entry<Rectangle, BufferedImage> processImage(BufferedImage from) {
         SupplData data = new SupplData(Tools.dimsFromImage(from));
@@ -37,4 +45,6 @@ public class ARGBSlicingSubtractor extends ARGBSubtractor {
             return result;
         }
     }
+
+
 }

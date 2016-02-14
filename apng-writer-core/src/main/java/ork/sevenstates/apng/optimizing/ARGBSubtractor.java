@@ -22,13 +22,23 @@ public class ARGBSubtractor implements Optimizer {
     private static final Logger LOGGER = Logger.getLogger(ARGBSubtractor.class.getName());
     private BufferedImage previous;
     private Double threshold;
+    private DeshrapnelingStrategy strategy;
 
     public ARGBSubtractor() {
-        this(DEFAULT_THRESHOLD);
+        this(DEFAULT_THRESHOLD, DeshrapnelingStrategy.NINE_PIXEL_3PASS);
     }
     
     public ARGBSubtractor(Double threshold) {
+        this(threshold, DeshrapnelingStrategy.NINE_PIXEL_3PASS);
+    }
+
+    public ARGBSubtractor(DeshrapnelingStrategy strategy) {
+        this(DEFAULT_THRESHOLD, strategy);
+    }
+
+    public ARGBSubtractor(Double threshold, DeshrapnelingStrategy strategy) {
         this.threshold = threshold;
+        setStrategy(strategy);
     }
 
     @Override
@@ -48,6 +58,14 @@ public class ARGBSubtractor implements Optimizer {
 
     public void setThreshold(Double threshold) {
         this.threshold = threshold;
+    }
+
+    public DeshrapnelingStrategy getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(DeshrapnelingStrategy strategy) {
+        this.strategy = strategy == null ? DeshrapnelingStrategy.NONE : strategy;
     }
 
     protected Map.Entry<Rectangle, BufferedImage> processImageWithData(BufferedImage from, SupplData data) {
@@ -98,122 +116,10 @@ public class ARGBSubtractor implements Optimizer {
         }
 
         //shrapnelling filter
-        int reverted = 0;
-        for (int j = 0; j < 3; j++)
-            reverted = stripDeshrapneller(dataThis, dataPrev, dOrig, reverted);
-        
-//        reverted = matrix5filter(dataThis, dataPrev, dOrig, reverted);
+        int reverted = strategy.process(dataThis, dataPrev, dOrig, 0);
         LOGGER.fine("Deshrapnelling filter reverted " + reverted + " pixels");
         data.modified-=reverted;
         return dataThis;
     }
 
-
-    private int deshrapneller(int[] dataThis, int[] dataPrev, Dimension size, int counter) {
-        for (int i = 0; i < dataThis.length; i++) { 
-            if (dataThis[i] == 0) {
-                int bits = 0; int count = 8;
-                int x = i % size.width;
-                int y = i / size.width;
-                if (x > 0 && dataThis[i-1] != 0) {
-                	if (dataThis[i-1] != 0) bits++;
-                } else count--;
-                if (y > 0 && x > 0) {
-                    if (dataThis[i - size.width - 1] != 0) bits++;
-                } else count--;
-                if (y > 0) {
-                	if (dataThis[i - size.width] != 0) bits++;
-                } else count--;
-                if (y > 0 && x < size.width - 1)  {
-                	if (dataThis[i - size.width + 1] != 0) bits++;
-                } else count--;
-                if (x < size.width - 1) {
-                    if (dataThis[i + 1] != 0) bits++;
-                } else count--;
-                if (y < size.height - 1 && x < size.width - 1) {
-                	if (dataThis[i + size.width + 1] != 0) bits++;
-                } else count--;
-                if (y < size.height - 1) {
-                	if (dataThis[i + size.width] != 0) bits++;
-                } else count--;
-                if (y < size.height - 1 && x > 0) {
-                	if (dataThis[i + size.width - 1] != 0) bits++;
-                } else count--;
-                if (bits > count/2) {
-                    dataThis[i] = dataPrev[i];
-                    counter++;
-                }
-            }
-        }
-        return counter;
-    }
-    
-    private int stripDeshrapneller(int[] dataThis, int[] dataPrev, Dimension size, int counter) {
-        for (int i = 0; i < dataThis.length; i++) { 
-            if (dataThis[i] == 0) {
-                int bits = 0; 
-                if (i > 0 && dataThis[i-1] != 0)
-					bits++;
-				if (i > size.width && dataThis[i - size.width - 1] != 0)
-					bits++;
-				if (i >= size.width && dataThis[i - size.width] != 0)
-					bits++;
-				if (i - size.width + 1 > 0 && dataThis[i - size.width + 1] != 0)
-					bits++;
-				if (i + 1 < dataThis.length && dataThis[i + 1] != 0)
-					bits++;
-				if (i + size.width < dataThis.length && dataThis[i + size.width] != 0)
-					bits++;
-				if (i + size.width + 1 < dataThis.length && dataThis[i + size.width + 1] != 0)
-					bits++;
-				if (i + size.width - 1 < dataThis.length && dataThis[i + size.width - 1] != 0)
-					bits++;
-                if (bits > 4) {
-                    dataThis[i] = dataPrev[i];
-                    counter++;
-                }
-            }
-        }
-        return counter;
-    }
-
-
-    private int matrix5filter(int[] dataThis, int[] dataPrev, Dimension dOrig, int counter) {
-        int winLen = 5;
-        for (int i = 0; i < dataThis.length; i+=winLen-1) {
-            int bits = 0;
-
-            int x = i % dOrig.width;
-            int y = i / dOrig.width;
-
-            if (x + winLen > dOrig.width) {
-                if (x + winLen == dOrig.width + dOrig.width % winLen){
-                    x = dOrig.width - winLen;
-                    i-=(winLen - (dOrig.width % winLen) - 1);
-                } else {
-                    i += (winLen-1) * dOrig.width - x - winLen + 1;
-                    continue;
-                }
-            }
-
-            if (y + winLen > dOrig.height) {
-                y = dOrig.height - winLen;
-            }
-
-            for (int k = y; k < y + winLen; k++)
-                for (int j = x; j < x + winLen; j++)
-                    if (dataThis[k * dOrig.width + j] != 0)
-                        bits++;
-
-            if (bits > (winLen*winLen)/2 && bits != winLen*winLen) {
-                for (int k = y; k < y + winLen; k++)
-                    for (int j = x; j < x + winLen; j++)
-                        if (dataThis[k * dOrig.width + j] == 0) {
-                            counter++;
-                            dataThis[k * dOrig.width + j] = dataPrev[k * dOrig.width + j];
-                        }
-            }
-        }
-        return counter;
-    }
 }
