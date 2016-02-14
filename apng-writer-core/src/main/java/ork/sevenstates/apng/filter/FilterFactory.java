@@ -18,7 +18,7 @@ public class FilterFactory {
 	 *            <li>3 - Average
 	 *            <li>4 - Paeth
 	 *            <li>-1 - LocalMinimum:Diff
-	 *            <li>-2 - LocalMinimum:Deflatter
+	 *            <li>-2 - LocalMinimum:Deflater
 	 *            </ul>
 	 * 
 	 * @return filter instance based on the code.
