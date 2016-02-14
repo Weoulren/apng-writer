@@ -86,7 +86,7 @@ public abstract class AbstractAPNGWriter implements Closeable {
 			throw new IOException("Image is null");
 		}
 		int gcd = gcd(1000, delay);
-		writeImage(img, size, 1000/gcd, delay/gcd);
+		writeImage(img, size, delay/gcd, 1000/gcd);
 	}
 
 	public abstract void writeImage(Image img, Dimension size, int fpsNum, int fpsDen) throws IOException;
