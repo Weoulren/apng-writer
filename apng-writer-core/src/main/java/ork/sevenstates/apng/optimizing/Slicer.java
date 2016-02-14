@@ -97,6 +97,11 @@ public class Slicer extends Identity {
         }
         data.topLeft=new Point(xs, ys);
         data.bottomRight = new Point(xe, ye);
+
+        if (data.getSize().equals(dOrig)) { //sad that to understand this we had to make all the way
+            return true;
+        }
+
         LOGGER.fine("Math for this one: xs,ys=" + xs + ","+ys + "; wxh=" + (xe - xs + 1) + "x" + (ye - ys + 1));
         return false;
     }
