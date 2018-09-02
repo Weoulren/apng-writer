@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 
 import ork.sevenstates.apng.optimizing.ARGBSlicingSubtractor;
+import ork.sevenstates.apng.optimizing.DeshrapnelingStrategy;
 
 public class APNGZipMain {
 
@@ -32,7 +33,7 @@ public class APNGZipMain {
 			
 		}
 		long time = System.currentTimeMillis();
-		APNGWriter writer = new APNGWriter(args[2], -2, new ARGBSlicingSubtractor(null));
+		APNGWriter writer = new APNGWriter(args[2], -2, new ARGBSlicingSubtractor((DeshrapnelingStrategy)null));
 		int delay = Integer.parseInt(args[1]);
 		int gcd = gcd(1000, delay);
 		System.out.println(gcd);
